@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('./database'); // Importa la instancia de Sequelize que ya creaste
+const sequelize = require('../data-access'); // Importa la instancia de Sequelize que ya creaste
 
 
 const Activity = sequelize.define('activity', {
@@ -12,5 +12,7 @@ const Activity = sequelize.define('activity', {
         allowNull: false
     },
 });
+
+Activity.sync();
 
 module.exports = Activity;
