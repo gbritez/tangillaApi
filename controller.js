@@ -5,7 +5,7 @@ async function controller(req, res) {
     if (!req.body) {
         res.sendStatus(404);
     } else {
-        const result = await core.lookUpSynonyms(req.body.formData);
+        const result = await core.lookUpSynonyms(req.body.text);
         dataService.Insert(req.body.formData, JSON.stringify(result))
         res.json(result);
     }
