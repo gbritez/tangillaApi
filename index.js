@@ -9,6 +9,10 @@ const port = 8080;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use(cors({
+    origin: 'https://gbritez.github.io/tangilla'
+}))
+
 app.post('/post', controller)
 
 app.listen(process.env.port || port, () => {
