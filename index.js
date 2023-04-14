@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: 'https://gbritez.github.io/tangilla'
+    origin: 'https://gbritez.github.io/'
 }))
 
 app.post('/post', controller)
