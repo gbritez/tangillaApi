@@ -5,7 +5,7 @@ function Insert(textValue, analysisValue) {
 
     Activity.create({
         text: textValue,
-        analysis: analysisValue.toString()
+        analysis: analysisValue
     });
 }
 

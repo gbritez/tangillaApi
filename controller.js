@@ -6,7 +6,7 @@ async function controller(req, res) {
         res.sendStatus(404);
     } else {
         const result = await core.lookUpSynonyms(req.body.text);
-        dataService.Insert(req.body.formData, JSON.stringify(result))
+        dataService.Insert(req.body.text, JSON.stringify(result))
         res.json(result);
     }
 }
