@@ -1,50 +1,47 @@
-const dataAccess = require('./data-access');
-const Wordnet = require("node-wordnet");
+const WordNet = require("node-wordnet");
 
 const excludedWords = new Set(["a", "the", "and", "of", "in", "be", "also", "as"]);
-const wordnet = new Wordnet();
+const wordnet = new WordNet();
+
 
 function cleanText(text) {
-    text = text.toString().toLowerCase();
-    let arrayFromText = text.split(/\s+/);
-    arrayFromText = arrayFromText.filter(x => !excludedWords.has(x));
-    return arrayFromText;
+    const arrayFromText = text.toString().toLowerCase().split(/\s+/);
+    return arrayFromText.filter(x => !excludedWords.has(x));
 }
 
-function removeDuplicatedResults(arr) {
-    let synonyms = arr.reduce(function (acc, result) {
+function removeDuplicatedResults(synset) {
+    const synonyms = synset.reduce((acc, result) => {
         return acc.concat(result.synonyms);
     }, []);
     return synonyms.filter((item, index) => synonyms.indexOf(item) === index)
 }
 
-async function lookUpSynonyms(text) {
-    const counts = {}
-    text = cleanText(text);
-
-    for (const word of text) {
-        const count = counts[word] || 0;
-        if (count === 0) {
-            let results = await wordnet.lookupAsync(word);
-            if (results.length > 0) {
-                results = removeDuplicatedResults(results);
-                counts[word] = count + results.length;
-            }
-            else {
-                counts[word] = 0;
-            }
-        }
-        else {
-            counts[word] = count + 1;
-        }
-    }
-
-    const result = Object.entries(counts).map(([word, synonyms_found]) => ({
-        word,
-        synonyms_found
-    }))
-
-    return result;
+async function getWordnetSynonyms(word) {
+    const synonyms = await wordnet.lookupAsync(word);
+    return synonyms;
 }
 
-module.exports = { lookUpSynonyms };
+async function findSynonyms(text) {
+    try {
+        const words = cleanText(text);
+
+        let synonyms = {};
+        for (let word of words) {
+            let synset = await getWordnetSynonyms(word);
+            synonyms[word] = removeDuplicatedResults(synset)
+        }
+
+        const result = words.reduce((output, word) => {
+            const synonymsOfWord = synonyms[word]
+            const key = Object.keys(output).find(word => synonymsOfWord.includes(word));
+            return key ? { ...output, [key]: output[key] + 1 } : { ...output, [word]: 0 }
+        }, {})
+
+        return Object.entries(result).map(([word, synonyms_found]) => ({ word, synonyms_found }))
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+
+module.exports = { findSynonyms };

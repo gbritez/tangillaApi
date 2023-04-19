@@ -1,4 +1,4 @@
-const sequelize = require('./data-access'); // Importa la instancia de Sequelize que ya creaste
+const sequelize = require('./data-access');
 const Activity = require('./models/activity');
 
 function Insert(textValue, analysisValue) {
